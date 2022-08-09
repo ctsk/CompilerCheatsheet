@@ -1,0 +1,1035 @@
+\documentclass[10pt, landscape]{article}
+
+\title{Compiler Construction $\cdot$ Exam Cheatsheet}
+\author{}
+\date{}
+
+
+\usepackage[rgb,dvipsnames]{xcolor}
+
+\usepackage{tikz}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{titlesec}
+\usepackage{titling}
+\usepackage{fancyhdr}
+\usepackage{mdframed}
+\usepackage{multicol}
+\usepackage{paralist}
+\usepackage[most]{tcolorbox}
+\usepackage{ifthen}
+\usepackage[a4paper, landscape, margin=.2in]{geometry}
+\usepackage{tcolorbox}
+\usepackage{tabularx}
+\usepackage{proof}
+\usepackage{graphicx}
+\usepackage{subfigure}
+
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{algorithm}{Algorithm}[section]
+
+%\newtcbox{\node}
+
+%\pagestyle{fancy}
+%\fancyhf{}
+%\rhead{\rightmark}
+%\lhead{Compiler Construction $\cdot$ Exam Cheatsheet}
+%\rfoot{Page \thepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Colorful
+
+% Generic Sets / Elements / Operators
+\newcommand{\Set}[1]{\textcolor{OliveGreen}{#1}}
+\newcommand{\Elem}[1]{\textcolor{blue}{#1}}
+\newcommand{\Op}[1]{\textcolor{WildStrawberry}{#1}}
+
+% Symbols
+\newcommand{\PowSet}[1]{\mathcal{P} (#1)}
+\newcommand{\Alphabet}{\Set{\Sigma}}
+\newcommand{\OneConcat}{\odot_{1}}
+\newcommand{\KConcat}{\odot_{k}}
+\newcommand{\Bul}{\,\bullet\,}
+
+% Regex & Berry-Sethi
+\newcommand{\LangOf}[1]{\mathcal{L} (#1)}
+\newcommand{\AttrOf}[2]{\text{#1}[#2]}
+\newcommand{\FirstAttr}[1]{\AttrOf{first}{#1}}
+\newcommand{\EmptyAttr}[1]{\AttrOf{empty}{#1}}
+\newcommand{\LastAttr}[1]{\AttrOf{last}{#1}}
+\newcommand{\NextAttr}[1]{\AttrOf{next}{#1}}
+
+% Grammars
+\newcommand{\derive}[1][]{\Op{\;\rightarrow_{#1}\;}}
+\newcommand{\derives}[1][]{\Op{\;\rightarrow_{#1}^{*}\;}}
+\newcommand{\derivep}[1][]{\Op{\;\rightarrow_{#1}^{+}\;}}
+\newcommand{\nontermcolor}{OliveGreen}
+\newcommand{\nt}[1]{\textcolor{\nontermcolor}{#1}}
+\newcommand{\nonterms}{\nt{N}}
+\newcommand{\ntA}{\nt{A}}
+\newcommand{\ntB}{\nt{B}}
+\newcommand{\ntC}{\nt{C}}
+\newcommand{\ntS}{\nt{S}}
+\newcommand{\termcolor}{NavyBlue}
+\newcommand{\term}[1]{\textcolor{\termcolor}{#1}}
+\newcommand{\terms}{\textcolor{\termcolor}{T}}
+\newcommand{\termws}{\textcolor{\termcolor}{T^*}}
+\newcommand{\termW}{\textcolor{\termcolor}{w}}
+\newcommand{\termA}{\textcolor{\termcolor}{a}}
+\newcommand{\termB}{\textcolor{\termcolor}{b}}
+\newcommand{\termX}{\textcolor{\termcolor}{x}}
+\newcommand{\termEnd}{\textcolor{\termcolor}{\$}}
+\newcommand{\termEps}{\textcolor{\termcolor}{\epsilon}}
+\newcommand{\prodcolor}{WildStrawberry}
+\newcommand{\prods}{\textcolor{\prodcolor}{P}}
+\newcommand{\grammarchars}{(\nonterms \cup \terms)}
+\newcommand{\grammarwords}{(\nonterms \cup \terms)^{*}}
+
+\newcommand{\LL}{\textcolor{\prodcolor}{LL}}
+\newcommand{\LLOne}{\textcolor{\prodcolor}{LL (1)}}
+\newcommand{\LR}{\textcolor{\prodcolor}{LR}}
+\newcommand{\LRZero}{\textcolor{\prodcolor}{LR (0)}}
+\newcommand{\LROne}{\textcolor{\prodcolor}{LR (1)}}
+\newcommand{\LRk}{\textcolor{\prodcolor}{LR (k)}}
+
+\newcommand{\FollowOne}{\textcolor{\prodcolor}{\text{Follow}_{1}}}
+\newcommand{\FirstOne}{\textcolor{\prodcolor}{\text{First}_{1}}}
+\newcommand{\FirstK}{\textcolor{\prodcolor}{\text{First}_{k}}}
+
+% Automata
+\newcommand{\step}{\Op{\;\vdash\;}}
+\newcommand{\steps}{\Op{\;{\vdash}^{*}\;}}
+\newcommand{\stepp}{\Op{\;{\vdash}^{+}\;}}
+\newcommand{\trans}{%
+  { \textcolor{WildStrawberry}{\delta} }
+}
+\newcommand{\closedtrans}{%
+  \textcolor{WildStrawberry}{\delta}_{ \textcolor{NavyBlue}{\epsilon} }^{ \textcolor{WildStrawberry}{*} }
+}
+\newcommand{\statecolor}{Maroon}
+\newcommand{\state}[1]{\textcolor{\statecolor}{#1}}
+\newcommand{\states}{\textcolor{\statecolor}{Q}}
+\newcommand{\stateQ}[1][]{\textcolor{\statecolor}{q_{#1}}}
+\newcommand{\stateQZ}{\stateQ[0]}
+\newcommand{\stateP}{\textcolor{\statecolor}{p}}
+\newcommand{\stateF}{\textcolor{\statecolor}{f}}
+\newcommand{\Action}{\textcolor{WildStrawberry}{\text{action}}}
+\newcommand{\Goto}{\textcolor{WildStrawberry}{\text{goto}}}
+
+% Type Checking
+
+\newcommand{\typecolor}{WildStrawberry}
+\newcommand{\type}[1]{\textcolor{\typecolor}{#1}}
+\newcommand{\TypeEnv}{\textcolor{\typecolor}{\Gamma}}
+\newcommand{\litcolor}{NavyBlue}
+\newcommand{\lit}[1]{\textcolor{\litcolor}{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Multicols Setup
+\setlength{\columnseprule}{0.4pt}
+
+\raggedcolumns
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{multicols*}{3}
+
+\section{Lexical Analysis}
+
+\subsection*{Definitions}
+
+\begin{definition}{Regular Expression}
+
+  The set $\mathcal{E}$ of regular expressions is the smallest set $\mathcal{E}$ with:
+
+  \begin{itemize}
+    \item $e \in \mathcal{E}$ ($\epsilon$ a new symbol not from $\Sigma$)
+    \item $a \in \mathcal{E}$ for all $a \in \Sigma$
+    \item $(e_{1} \mid e_{2})$, $e_{1}\cdot e_{2}$, $e_{1}^{*} \in \mathcal{E}$ if $e_{1}, e_{2} \in \mathcal{E}$
+  \end{itemize}
+\end{definition}
+
+\begin{definition}{Finite Automata}
+
+  A \textbf{non-deterministic} finite automaton (NFA) is a tuple $A = (Q, \Sigma, \delta, I, F)$ with:
+  \begin{center}
+    \begin{tabular}{l l}
+      $\states$ & a finite set of states \\
+      $\Alphabet$ & a finite alphabet of inputs \\
+      $\Set{I} \subseteq \states$ & the set of start states \\
+      $\Set{F} \subseteq \states$ & the set of final states \\
+      $\trans$ & the transition relation \\
+
+    \end{tabular}
+  \end{center}
+
+  A \textbf{deterministic} finite automaton (DFA) is an NFA where $\trans$ is a function and $|\Set{I}| = 1$.
+\end{definition}
+
+
+\subsection*{Theorems}
+
+\begin{theorem}{Thompson vs Berry-Sethi Construction}
+
+  For a regular expression of length $n$ \dots
+
+  \dots Thompson's Algorithm constructs an automaton with $\mathcal{O}(n)$ states
+
+  \dots Berry and Sethi's Algorithm produces an automaton that has exactly $n + 1$ states without $\epsilon$-transitions.
+
+\end{theorem}
+
+\begin{theorem}{Powerset Construction}
+
+  For every NFA we can compute a deterministic automaton $\PowSet{A}$ with
+  \[\LangOf{A} = \LangOf{\PowSet{A}}\]
+
+  (Corollary: We can construct a DFA for every RegEx)
+
+\end{theorem}
+
+\subsection*{Algorithms}
+
+\subsubsection{Powerset construction}
+  \begin{tabular}{r l}
+    States      & Powersets of $\states$ \\
+    Start state & $\Set{I}$ \\
+    Final State & $\{\states' \subseteq \states \mid \states' \cap \Set{F} \neq \emptyset\}$\\
+    Transitions & $\delta_{\mathcal{P}}(\states', \termA) = \{\stateQ \in \states \mid \exists \stateP \in \states' : (\stateP, \termA, \stateQ) \in \trans \}$
+  \end{tabular}
+
+\subsubsection{Berry-Sethi Approach}
+
+{
+  \newcommand{\Rx}[1]{\textcolor{Maroon}{#1}}
+  \newcommand{\Left}[1]{\Bul \textcolor{Maroon}{#1}}
+  \newcommand{\Right}[1]{\textcolor{Maroon}{#1} \Bul}
+  \newcommand{\Leaf}[2]{\boxed{\textcolor{Maroon}{#1} \mid {#2}} }
+
+  \begin{algorithm}{Naive Construction}
+
+    \begin{tabular}{r l}
+      States      & $\Left{r}$, $\Right{r}$ for every nodes $\Rx{r}$ of $\Rx{e}$ \\
+      Start state & $\Left{e}$ \\
+      Final State & $\Right{e}$
+    \end{tabular}
+
+    \begin{multicols}{2}[\setlength{\columnseprule}{0pt}]
+      \begin{tabular}{l @{ (} r @{, $\termEps$ , } l @{)}}
+        $\Rx{r1 \mid r2}$ & $\Left{r}$      & $\Left {r_{1}}$ \\
+                          & $\Left{r}$      & $\Left{r_{2}}$ \\
+                          & $\Right{r_{1}}$ & $\Right{r}$ \\
+                          & $\Right{r_{2}}$ & $\Right{r}$ \\
+        \midrule
+        $\Rx{r1 \cdot r2}$ & $\Left{r}$      & $\Bul r_{1}$ \\
+                           & $\Right{r_{1}}$ & $\Left{r_{2}}$ \\
+                           & $\Right{r_{2}}$ & $\Right{r}$ \\
+      \end{tabular}
+
+      \begin{tabular}{l @{ (} r @{, $\termEps$ , } l @{) }}
+        $\Rx{r1^{*}}$ & $\Left{r}$      & $\Right{r}$ \\
+                      & $\Left{r}$      & $\Left{r_{1}}$ \\
+                      & $\Right{r_{1}}$ & $\Left{r_{1}}$ \\
+                      & $\Right{r_{1}}$ & $\Right{r}$ \\
+        \midrule
+        $\Rx{r1{?}}$ & $\Left{r}    $ & $\Right{r}$ \\
+                     & $\Left{r}    $ & $\Left{r_{1}}$ \\
+                     & $\Right{r_{1}}$ & $\Right{r}$ \\
+      \end{tabular}
+
+    \end{multicols}
+  \end{algorithm}
+
+  \begin{algorithm}{Sophisticated Construction}
+
+    \begin{tabular}{r l}
+      States      &$\{ \Left{e} \} \cup \{\Right{i} \mid i \text{ is Leaf}\neq \termEps\}$ \\
+      Start state & $\Left{e}$ \\
+      Final State & $\LastAttr{\Rx{e}}$ if $\EmptyAttr{e} = f$\\
+                  & $\LastAttr{\Rx{e}} \cup \{\Left{e}\}$ otherwise \\
+    Transitions & $(\Left{e}, a, \Right{i})$ if $\Rx{i} \in \FirstAttr{e}$, $\Rx{i}$ labeled $\termA$ \\
+                  & $(\Left{i}, a, \Right{i'})$ if $\Rx{i'} \in \NextAttr{i}$, $\Rx{i'}$ labeled $\termA$
+    \end{tabular}
+  \end{algorithm}
+
+  %%%%%%%%%%%%
+  \columnbreak
+  %%%%%%%%%%%%
+
+  \begin{algorithm}{Attribute computation}
+
+
+    \begin{align*}
+      \EmptyAttr{\Leaf{i}{\termX}} &= \termX \equiv \termEps  \\
+      \EmptyAttr{r_{1} \mid r_{2}} &= \EmptyAttr{r_{1}} \lor \EmptyAttr{r_{2}} \\
+      \EmptyAttr{r_{1} \cdot r_{2}} &= \EmptyAttr{r_{1}} \land \EmptyAttr{r_{2}} \\
+      \EmptyAttr{r_{1}^{*}} &= t \\
+      \EmptyAttr{r_{1}?} &= t
+    \end{align*}
+
+    \begin{align*}
+      \FirstAttr{\Leaf{i}{\termX}} &= \{ i \mid \termX \neq \termEps \}\\
+      \FirstAttr{r_{1} \mid r_{2}} &= \FirstAttr{r_{1}} \cup \FirstAttr{r_{2}} \\
+      \FirstAttr{r_{1} \cdot r_{2}} &= \begin{cases}
+                                          \FirstAttr{r_{1}} \cup \FirstAttr{r_{2}} & \text{if } \EmptyAttr{r_{1}} = t \\
+                                          \FirstAttr{r_{1}}                          & \text{if } \EmptyAttr{r_{1}} = f
+                                        \end{cases} \\
+      \FirstAttr{r_{1}^{*}} &= \FirstAttr{r_{1}} \\
+      \FirstAttr{r_{1}?} &= \FirstAttr{r_{1}}
+    \end{align*}
+
+    \begin{align*}
+      \LastAttr{\Leaf{i}{\termX}} &=  \{ i \mid \termX \neq \termEps \} \\
+      \LastAttr{r_{1} \mid r_{2}} &= \LastAttr{r_{1}} \cup \LastAttr{r_{2}} \\
+      \LastAttr{r_{1} \cdot r_{2}} &= \begin{cases}
+                                          \LastAttr{r_{1}} \cup \LastAttr{r_{2}} & \text{if } \EmptyAttr{r_{2}} = t \\
+                                          \LastAttr{r_{2}}                          & \text{if } \EmptyAttr{r_{2}} = f
+                                        \end{cases} \\
+      \LastAttr{r_{1}^{*}} &= \LastAttr{r_{1}} \\
+      \LastAttr{r_{1}?} &= \LastAttr{r_{1}}
+    \end{align*}
+
+    \vspace{.25in}
+
+    \begin{tabular}{c  l}
+      $root$ & $\emptyset$ \\
+      \midrule
+      $r_{1} \mid r_{2}$    & $\NextAttr{r_{1}} = \NextAttr{r}$ \\
+                        & $\NextAttr{r_{2}} = \NextAttr{r}$ \\
+
+      \midrule
+
+      $r_{1} \cdot r_{2}$ & $\begin{cases}
+                              \FirstAttr{r_{1}} \cup \FirstAttr{r}   & \text{if } \EmptyAttr{r_{2}} = t \\
+                              \FirstAttr{r_{2}}                      & \text{if } \EmptyAttr{r_{2}} = f \\
+                            \end{cases}$ \\
+                        & $\NextAttr{r_{2}}$ = $\NextAttr{r}$ \\
+      \midrule
+      $r_{1}^{*}$         & $\NextAttr{r_{1}} = \FirstAttr{r_{1}} \cup \NextAttr{r}$ \\
+      \midrule
+      $r_{1}?$            & $\NextAttr{r_{1}} =\NextAttr{r}$ \\
+    \end{tabular}
+
+  \end{algorithm}
+}
+
+%%%%%%%%%%%%
+\columnbreak
+%%%%%%%%%%%%
+
+\section{Syntactic Analysis}
+
+\subsection*{Definitions}
+
+\begin{definition}{Context-free Grammar}
+
+  A CFG is a 4-tuple $G=(N, T, P, S)$ where:
+
+  \begin{tabular}{l l}
+    $\nonterms$       & is the set of non-terminals \\
+    $\terms$          & is the set of terminals\\
+    $\prods$          & is the set of productions\\
+    $\ntS \in \nonterms$ & is the start symbol
+  \end{tabular}
+
+\end{definition}
+
+
+\begin{definition}{Rewriting}
+
+  The rewriting relation $\derive$ is a relation over $\grammarwords$, with:
+  \[
+    \alpha \derive \alpha' \iff \alpha = \alpha_{1}\ntA\alpha_{2} \land \alpha = \alpha_{1}\beta\alpha_{2}
+  \]
+  for an $\ntA \derive \beta \in \prods$.
+
+\end{definition}
+
+\begin{definition}{Language of a Grammar}
+
+  \[
+    \LangOf{G} = \{w \in \termws \mid S \derives w\}
+  \]
+
+\end{definition}
+
+
+\begin{definition}{Unique Grammar}
+
+  Grammar $G$ is called unique, if for every $\termW \in \termws$ there is maximally one derivation tree $t$ of $S$ with $yield(t) = \termW$.
+
+\end{definition}
+
+
+\begin{definition}{Left Recursive Grammar}
+
+  A Grammar is called left-recursive, if
+  \[
+    \ntA \derivep \ntA\beta \text{ for an } \ntA\in \nonterms, \beta \in \grammarwords
+  \]
+
+\end{definition}
+
+
+\begin{definition}{Productive and Reachable Non-Terminals}
+
+  $\ntA \in \nonterms$ is productive, if $\ntA \derives \termW$ for a $\termW \in \termws$
+
+  $\ntA \in \nonterms$ is reachable, if $\ntS \derives \alpha \ntA \beta $ $[\alpha,\beta\in \grammarwords]$
+
+  A Grammar is called \textbf{reduced} if all productions are productive and reachable.
+
+\end{definition}
+
+
+\begin{definition}{Pushdown Automaton}
+
+  \dots is a tuple $M = (Q, T, \delta, q_{0}, F)$ with:
+  \begin{center}
+    \begin{tabular}{l l}
+      $\states$                                                              & a finite set of states \\
+      $\terms$                                                              & an input alphabet\\
+      $\stateQZ \in \states$                                                     & the start state \\
+      $\Set{F} \subseteq \states$                                                   & the set of final states \\
+      $\trans \subseteq \states^{+} \times (\terms \cup \{\epsilon\}) \times \states^{*}$ & a finite set of transitions \\
+    \end{tabular}
+  \end{center}
+
+  \paragraph{A \textit{configuration / computation state}} is a pair $(\state{\gamma}, \termW) \in \states^{*} \times \termws$ consisting of the pushdown content and the remaining input
+
+  \paragraph{A \textit{computation step}} is characterized by the relation $(\state{\alpha\gamma}, \term{xw}) \step (\state{\alpha\gamma'}, \termW)$ where $(\state{\gamma}, \termX, \state{\gamma'}) \in \trans$
+
+  \paragraph{A PDA is \textit{deterministic}} if every configuration has maximally one successor configuration.
+
+\end{definition}
+
+\begin{definition}{Language of an Automaton}
+  \[
+    \LangOf{M} = \{\termW \in \termws \mid \exists f \in \Set{F} : (\stateQZ, \termW) \steps (f, e)\}
+  \]
+\end{definition}
+
+\begin{definition}{Items}
+
+  \dots is a rule with a \textbf{bullet$\Bul$}. The \textbf{$\Bul$} marks the progress of processing that rule. Items of the form $[\ntA \derive \alpha \Bul]$ are called complete.
+
+\end{definition}
+
+\begin{definition}{$\text{First}_{1}$-Sets}
+
+  For a set $L \subseteq \termws$ we define:
+  \[
+    \text{First}_{1} (L) = \{\termEps \mid \termEps \in L \} \cup \{u \in \terms \mid \exists v \in \termws : uv \in L\}
+  \]
+\end{definition}
+
+
+\begin{definition}{$LL(1)$ Grammar}
+
+  A reduced grammar is $LL(1)$, if for distinct rules $\ntA \derive \alpha, \ntA \derive \alpha' \in \prods$ and each derivation $\ntS \derives[L] u\ntA\beta$ with $u \in \termws$
+  \[
+    \FirstOne (\alpha\beta) \cap \FirstOne (\alpha'\beta) = \emptyset
+  \]
+  holds.
+
+\end{definition}
+
+\begin{definition}{$LL (1)$-Lookahead Table}
+
+  We set $M[\ntB, \termW] = \textcolor{Maroon}{i}$ with $\ntB \derive \gamma^{\textcolor{Maroon}{i}}$ if {$\termW \in \FirstOne (\gamma) \OneConcat \FollowOne (\ntB)$}.
+
+\end{definition}
+
+\begin{definition}{1-concatenation}
+  {
+    \newcommand{\Lang}[1]{
+      L_{#1}
+    }
+
+    Let $\Lang{1}, \Lang{2} \subseteq \terms \cup \{ \termEps \}$ with $\Lang{1} \neq \emptyset \neq \Lang{2}$ Then:
+
+    \[
+      \Lang{1} \OneConcat \Lang{2} = \begin{cases}
+                                       \Lang{1} & \text{if} \termEps \notin \Lang{1} \\
+                                       (\Lang{1} - \{\termEps\}) \cup \Lang{2}  & \text{otherwise}
+                                     \end{cases}
+                                   \]
+
+
+  }
+\end{definition}
+
+\begin{definition}{$\LRZero$ Conflicts}
+
+  \begin{compactenum}
+    \item Shift-Reduce-Conflict
+
+          \dots is present if any state of the canonical $\LRZero$ Automaton contains two items
+          $[\ntA \derive \gamma \bullet]$ and \\ $[\ntA' \derive \alpha \bullet \termA \beta]$
+          where $\ntA \neq \ntA'$ or $\gamma \neq \gamma'$
+
+    \item Reduce-Reduce Conflict
+
+          \dots is present if any state of the canonical $\LRZero$ Automaton contains two items
+          $[\ntA \derive \gamma \bullet]$ and $[\ntA' \derive \gamma' \bullet]$
+          where $\ntA \neq \ntA'$ or $\gamma \neq \gamma'$
+
+  \end{compactenum}
+
+\end{definition}
+
+
+\begin{definition}{$\LRk$-Grammar}
+
+  \dots is a grammar where
+
+  \begin{compactenum}
+    \item $\alpha\beta\termW |_{|\alpha\beta|+k}$ = $\alpha'\beta'\termW' |_{|\alpha'\beta'|+k}$
+    \item \textbf{and} $S \derives{R} \alpha \ntA \termW \derive \alpha \beta \termW$
+    \item \textbf{and} $S \derives{R} \alpha' \ntA' \termW' \derive \alpha' \beta' \termW'$
+  \end{compactenum}
+
+  \textbf{implies} $\alpha = \alpha' \land \beta = \beta' \land \ntA = \ntA'$
+
+\end{definition}
+
+\begin{definition}{$\LROne$-Item}
+
+  An $\LROne$-item is a pair $[\ntB \derive \alpha \Bul \beta, \termX]$ with
+  \[
+    x \in \FollowOne (\ntB) = \bigcup \{ \FirstOne (\nu) \mid \ntS \derives \mu \ntB \nu\}
+  \]
+
+\end{definition}
+
+\begin{definition}{$\LRk$ Conflicts}
+
+  \begin{compactenum}
+    \item Shift-Reduce-Conflict
+
+          \dots is present if any state of the canonical $\LRk$ Automaton contains two items
+          $[\ntA \derive \gamma \bullet, \termX]$ and \\ $[\ntA' \derive \alpha \bullet \termA \beta, \term{y}]$
+          with $\termA \in \terms$ and \\ $\termX \in \{ \termA \} \KConcat \FirstK (\beta) \KConcat \{ \term{y} \}$
+
+    \item Reduce-Reduce Conflict
+
+          \dots is present if any state of the canonical $\LRk$ Automaton contains two items
+          $[\ntA \derive \gamma \bullet, \termX]$ and $[\ntA' \derive \gamma' \bullet, \termX]$
+          where $\ntA \neq \ntA'$ or $\gamma \neq \gamma'$
+
+  \end{compactenum}
+
+\end{definition}
+
+\subsection*{Theorems}
+
+\begin{theorem}{Reduction}
+
+  Any CFG can be transformed into an equivalent reduced Grammar in linear time.
+
+\end{theorem}
+
+\begin{theorem}{Left-Recursive}
+
+  Grammar $G$ is left-recursive $\implies$ G is not $LL(k)$ for any k
+
+\end{theorem}
+
+\begin{theorem}{PDAs and CFGs}
+
+  For each CFG $G$ we can build a PDA $M$ with
+  \[
+    \LangOf{G} = \LangOf{M}
+  \]
+
+  \begin{compactitem}
+    \item $M_{G}^{\textcolor{red}L}$ builds \textcolor{red}{l}eftmost derivations
+    \item $M_{G}^{\textcolor{red}R}$ builds reverse \textcolor{red}{r}ightmost derivations
+  \end{compactitem}
+\end{theorem}
+
+\begin{theorem}{$\FirstOne$ and Productiveness}
+
+  If all rules of $G$ are productive, then all sets $\FirstOne(\ntA)$ are non-empty.
+
+\end{theorem}
+
+\begin{theorem}{$\LRZero$}
+
+  \dots is generally not determinstic.
+
+\end{theorem}
+
+\begin{theorem}{Canonical Automaton and $\LRk$}
+
+  A grammar is $\LRk$ $\iff$ the canonical $\LRk$-automaton is conflict-free.
+
+\end{theorem}
+
+\subsection*{Algorithms}
+
+{
+  \newtcbox{\obox}[1][]{enhanced,
+    box align=base,
+    nobeforeafter,
+    colback=Yellow,
+    size=small,
+    left=0pt,
+    right=0pt,
+    boxsep=2pt,
+    #1
+  }
+
+  \newtcbox{\abox}[1][]{enhanced,
+    box align=base,
+    nobeforeafter,
+    colback=YellowGreen,
+    size=small,
+    left=0pt,
+    right=0pt,
+    boxsep=2pt,
+    #1
+  }
+
+  \begin{algorithm}{\abox{And}-\obox{Or}-Graph Construction}
+
+    \begin{compactenum}
+      \item Add a \textbf{Rule node} $[B,i]$ for all rules $[B,i]$
+      \item Add a \textbf{Non-Terminal node} [B] for all $B \in N$
+      \item Add an \textbf{\obox{Or}-Edge} \obox{$[B,i] \rightarrow [B]$} for all rules $[B,i]$
+      \item Add an \textbf{\abox{And}-Edge} \abox{$[B] \rightarrow [B,i]$} \\if $[B,i] \equiv \ntB \derive \alpha_{1} \ntA \alpha_{2}$ for some $\alpha_{1}, \alpha_{2} \in \grammarwords$:w
+    \end{compactenum}
+
+  \end{algorithm}
+
+  \begin{algorithm}{And-Or-Graph Evaluation}
+
+    Evaluate a node to true if:
+    \begin{compactenum}
+      \item the tail of \textbf{all} incoming \abox{And}-Edges evaluate to true
+      \item the tail of \textbf{any} incoming \obox{Or}-Edges evaluate to true
+      \item the node has no predessors
+    \end{compactenum}
+
+  \end{algorithm}
+}
+
+\begin{algorithm}{Item Pushdown Automaton ($M_{G}^{L}$)}
+
+  First, add another rule $[\ntS' \derive \ntS\$]$
+
+  \begin{tabular}{r l}
+    Start State    & $[\ntS' \derive \Bul \ntS \$]$ \\
+    End State      & $[\ntS' \derive \ntS\Bul \$]$
+  \end{tabular}
+
+  \begin{tabular}{r l}
+    Expansions & $([\ntA \derive \alpha \Bul \ntB \beta], \epsilon, [\ntA \derive \alpha \Bul \ntB \beta][\ntB \derive \Bul\gamma])$ \\
+               & for $\ntA \derive \alpha \ntB \beta, \ntB \derive \gamma \in \prods$ \\
+    Shifts     & $([\ntA \derive \alpha \Bul \termA \beta], \termA, [\ntA \derive \alpha \termA \Bul \beta])$ \\
+               & for $\ntA \derive \alpha \termA \beta \in \prods$ \\
+    Reduces    & $([\ntA \derive \alpha \Bul \ntB \beta][\ntB \derive \gamma\Bul], \epsilon, [\ntA \derive \alpha \ntB \Bul \beta])$ \\
+               & for $\ntA \derive \alpha \ntB \beta, \ntB \derive \gamma \in \prods$ \\
+  \end{tabular}
+
+\end{algorithm}
+
+\begin{algorithm}{$\text{First}_{1} \text{ \& } \text{Follow}_{1}$ computation}
+  \begin{compactenum}
+    \item Compute $\text{empty} (X) \equiv X \derives \epsilon$
+    \item Solve the inequality system given by:\\
+    \begin{tabular}{l l}
+      $F_{\epsilon} (\termA) = \{\termA\}$                         & if $\termA \in \terms$ \\
+      $F_{\epsilon} (\ntA) \supseteq F_{\epsilon} (X_{j})$ & if $\ntA \derive X_{1}\dots X_{m}\in \prods$ \\
+                                                       & and $\bigwedge\limits_{i=1}^{j-1} \text{empty} (X_{i})$
+    \end{tabular}
+
+    \item $\text{First}_{1} (A) = F_{\epsilon}(A) \cup \{\epsilon \mid A \derives \epsilon \}$
+    \item Solve the inequality system given by:\\
+    \begin{tabular}{l l}
+      $\text{Follow}_{1} (\ntS) \supseteq \{\$\}$ \\
+      $\text{Follow}_{1} (\ntB) \supseteq F_{\epsilon} (X_{j})$ & if $\ntA \derive \alpha \ntB X_{1} \dots X_{m} \in \prods$ \\
+                                                           & and $\bigwedge\limits_{i=1}^{j-1} \text{empty} (X_{i})$ \\
+      $\text{Follow}_{1} (\ntB) \supseteq Follow_{1} (A)$ & if $\ntA \derive \alpha \ntB X_{1} \dots X_{m} \in \prods$ \\
+                                                             & and $\bigwedge\limits_{i=1}^{m} \text{empty} (X_{i})$
+    \end{tabular}
+  \end{compactenum}
+\end{algorithm}
+
+\begin{algorithm}{Shift-Reduce Parser}
+
+  \begin{tabular}{r l l}
+
+    States       & $\grammarchars \cup \{\stateQZ, \stateF\}$ \\
+    Start state  & $\stateQZ$ \\
+    Final states & $\{ \stateF \}$ \\
+    Transitions  & $\{ (\stateQ, \termX, \stateQ \termX) \mid q \in Q, x \in \terms \}$ & (Shift) \\
+                 & $\cup\; \{ (\alpha, \termEps, \ntA) \mid A \derive \alpha \in \prods \}$ & (Reduce) \\
+                 & $\cup\; \{ (\stateQZ \ntS, \termEps, \stateF)\}$ & (Finish)
+
+  \end{tabular}
+
+\end{algorithm}
+
+\begin{algorithm}{Characteristic $\LRZero$-Automaton}
+
+  \begin{tabular}{r l}
+
+    States       & Items \\
+    Start state  & $[\ntS' \derive \Bul \ntS]$ \\
+    Final states & $\{ [\ntB \derive \gamma \Bul] \mid \ntB \derive \gamma \in \prods \}$ \\
+    Transitions  & $([\ntA \derive \alpha \Bul X \beta], X, [\ntA \derive \alpha X \Bul \beta])$ \\
+                 & \indent $X \in (\nonterms \cup \terms), \ntA \derive \alpha X \beta \in \prods$ \\
+                 & $([\ntA \derive \alpha \Bul \ntB \beta], \termEps, [\ntB \derive \Bul \gamma])$ \\
+                 & \indent $\ntA \derive \alpha \ntB \beta, \ntB \derive \gamma \in \prods$\\
+
+  \end{tabular}
+
+\end{algorithm}
+
+\begin{algorithm}{Canonical $\LRZero$-Automaton}
+
+  \begin{tabular}{r l}
+
+    States       & Sets of Items \\
+    Start state  & $\closedtrans \{ [\ntS' \derive \Bul \ntS] \}$ \\
+    Final states & $\{ \stateQ \mid [\ntA \derive \alpha \Bul] \in \stateQ \}$ \\
+  \end{tabular}
+
+  \[
+    \trans (\stateQ, X) = \closedtrans \{ [\ntA \derive \alpha X \Bul \beta] \mid [\ntA \derive \alpha \Bul X \beta ] \in \stateQ \}
+  \]
+  \[
+    \begin{aligned}
+      \closedtrans (\stateQ) = \stateQ \cup \{ [\ntB \derive \Bul \gamma] \mid & \ntB \derive \gamma \in \prods, \\
+                                                                                  & [\ntA \derive \alpha \Bul \ntB' \beta'] \in \stateQ, \\
+                                                                                  & \ntB' \derives \ntB\beta\}
+    \end{aligned}
+  \]
+
+\end{algorithm}
+
+\begin{algorithm}{$\LRZero$-Parser}
+
+  Based on the canonical automaton $(\states, \terms, \trans, \stateQZ, \stateF)$ \dots
+
+  \begin{tabular}{r l}
+    States       & $\states \cup {\stateF}$ \\
+    Start state  & $\stateQZ$ \\
+    Final states & $\stateF$ \\
+    \textbf{Shifts} & $( \stateP, \termA, \stateP \stateQ)$  \\
+                    & if $\stateQ = \trans (\stateP, \termA) \neq \emptyset$ \\
+    \textbf{Reduce} & $( \stateP, \stateQ[1] \dots \stateQ[m], \termEps, \stateP\stateQ) $ \\
+                    & if $[\ntA \derive X_{1} \dots X_{m} \Bul] \in \stateQ[m], q = \trans (\stateP, \termA)$ \\
+    \textbf{Finish} & $( \stateQZ \stateP, \termEps, \stateF)$  \\
+                    & if $[ \ntS' \derive \ntS\Bul] \in \stateP$
+  \end{tabular}
+
+\end{algorithm}
+
+\columnbreak{}
+
+\begin{algorithm}{Characteristic $\LROne$-Automaton}
+
+  \begin{tabular}{r l}
+
+    States       & $\LROne$-Items \\
+    Start state  & $[\ntS' \derive \Bul \ntS, \termEnd]$ \\
+    Final states & $\{ [B \derive \gamma \Bul, \termX] \mid $ \\
+                 & \indent $B \derive \gamma \in \prods \termX \in \FollowOne (\ntB)\}$ \\
+    Transitions  & $([\ntA \derive \alpha \Bul X \beta, \termX], X, [\ntA \derive \alpha X \Bul \beta, \termX])$ \\
+                 & \indent $X \in \grammarchars $ \\
+                 & $([\ntA \derive \alpha \Bul \ntB \beta, \termX], \termEps, [\ntB \derive \Bul \gamma, \termX'])$ \\
+                 & \indent $\ntA \derive \alpha \ntB \beta, \ntB \derive \gamma \in \prods$\\
+                 & \indent $\termX' \in \FirstOne (\beta) \OneConcat \{ \termX \}$\\
+
+  \end{tabular}
+
+\end{algorithm}
+
+\begin{algorithm}{Canonical $\LROne$-Automaton}
+
+  \begin{tabular}{r l}
+
+    States       & Sets of $\LROne$-Items \\
+    Start state  & $\closedtrans \{ [\ntS' \derive \Bul \ntS, \termEnd] \}$ \\
+    Final states & $\{ \stateQ \mid [\ntA \derive \alpha \Bul, \termX] \in \stateQ \}$
+  \end{tabular}
+
+  \[
+    \trans(\stateQ, X) = \closedtrans \{ [\ntA \derive \alpha X \Bul \beta, \termX] \mid [\ntA \derive \alpha \Bul X \beta, \termX] \in \stateQ \}
+  \]
+  \[
+    \begin{aligned}
+      \closedtrans (\stateQ) = \stateQ \cup \{ [\ntC \derive \Bul \gamma, \termX] \mid & [\ntA \derive \alpha
+                                                                                         \Bul \ntB \beta', \termX']
+                                                                                         \in \stateQ, \\
+                                                                                       & \ntB \derives \ntC \beta, \ntC \derive \gamma \in \prods, \\
+                                                                                       & \termX \in \FirstOne (\beta\beta')\OneConcat \{ \termX' \}
+    \end{aligned}
+  \]
+
+\end{algorithm}
+
+\begin{algorithm}{$\LROne$ Action Table}
+
+  Type: $\states \times \terms \rightarrow \LRZero-Items \cup \{s, error\}$
+
+  \begin{tabular}{r l}
+    \textbf{Reduce} & $\Action[\stateQ, \termW] = [\ntA \derive \beta \Bul]$ \\
+                    & \indent if $[\ntA \derive \beta \Bul, w] \in \stateQ$ \\
+    \textbf{Shift}  & $\Action[\stateQ, \termW] = s$ \\
+                    & \indent if $[\ntA \derive \beta \Bul \termB \gamma, \termA] \in \stateQ$ \\
+                    & \indent and $w \in \FirstOne (\termB \gamma) \OneConcat \{ \termA \}$ \\
+    \textbf{Error}  & $\Action[\stateQ, \termW] = error$ otherwise
+  \end{tabular}
+
+\end{algorithm}
+
+\begin{algorithm}{$\LROne$-Parser}
+
+  Based on the canonical automaton $(\states, \terms, \trans, \stateQZ, \stateF)$ with lookahead $\termW$ \dots
+  \[
+    \Goto[\stateQ, X] = \trans (\stateQ, x)
+  \]
+  \begin{tabular}{r l}
+    States       & $\states \cup \{ \stateF \}$ \\
+    Start state  & $\stateQZ$ \\
+    Final states & $\stateF$ \\
+    \textbf{Shifts} & $( \stateP, \termA, \stateP \stateQ)$  \\
+                    &  \begin{tabular}{r l}
+                        if & $\termA = \termW$, \\
+                           & $s = \Action[\stateQ, \termA]$ $\stateQ = \Goto[\stateQ, \termA]$
+                      \end{tabular}\\
+    \textbf{Reduce} & $( \stateP, \stateQ[1] \dots \stateQ[|\beta|], \termEps, \stateP\stateQ) $ \\
+                    & \begin{tabular}{r l}
+                        if & $\stateQ[|\beta|] \in F$,
+                            $[\ntA \derive \beta\ \Bul] = \Action[\stateQ[|\beta|]]$, \\
+                           & $q = \Goto[\stateP, \ntA]$ \\
+                      \end{tabular} \\
+    \textbf{Finish} & $( \stateQZ \stateP, \termEps, \stateF)$ \\
+                    & \begin{tabular}{r l}
+                        if & $[ \ntS' \derive \ntS\Bul, \termEnd] \in \stateP$
+                      \end{tabular} \\
+  \end{tabular}
+
+\end{algorithm}
+
+\pagebreak
+
+\section{Semantic Analysis}
+
+\subsection*{Definitions}
+
+\begin{definition}{Attribute Grammar}
+
+  An \textit{attribute grammar} is a CFG extended by
+  \begin{compactitem}
+    \item a set of attributes for each non-terminal and terminal
+    \item local attribute equations
+  \end{compactitem}
+\end{definition}
+
+\begin{definition}{Inherited and Synthesized Attributes}
+
+  An attribute at $N$ is called\dots
+  \begin{compactitem}
+    \item \textbf{inherited} if its value is defined in terms of attributes of $N$'s parent, siblings and/or $N$ itself
+    \item \textbf{synthesized} if its value is defined in terms of attributes of $N$'s children and/or $N$ itself
+  \end{compactitem}
+\end{definition}
+
+\begin{definition}{General Attribute Systems}
+  \begin{compactitem}
+    \item {\color{red} $attribute_{k}[0]$} $\rightarrow$ the attribute of the current root node
+    \item {\color{red} $attribute_{k}[i]$} $\rightarrow$ the attribute of the i-th child ($i > 0$)
+  \end{compactitem}
+\end{definition}
+
+\begin{definition}{L-Attributed Grammars}
+
+\includegraphics[page=205, width=\columnwidth, trim= 2.3cm 5.8cm 3cm .85cm, clip]{./selfservice-handout.pdf}
+
+  An attribute system is $L$-attributed, if for all productions $\ntS \derive \nt{S_{1}} \dots \nt{S_{n}}$ every inherited attribute of $S_{j}$ $(1 \le j \le n)$ only depends on
+  \begin{compactitem}
+    \item the attributes of $\nt{S_{1}} \dots \nt{S_{j - 1}}$
+    \item the inherited attributes of $\ntS$
+  \end{compactitem}
+
+
+
+  Motivation:
+
+  \begin{compactitem}
+    \item any L-attributed grammar is strongly acyclic
+    \item the attributes of an L-attributed grammar can be evaluated during parsing
+    \item the attributes of an L-attributed grammar can be evaluated in a single DFS
+    \item we try to partition attributes of our systems into L-attributed sets
+  \end{compactitem}
+
+\end{definition}
+
+\begin{definition}{Type Checking Problem}
+
+  \textbf{Given} a set of type declarations $\textcolor{\prodcolor}{\Gamma} = \{ \textcolor{\prodcolor}{t_{1}} \textcolor{\termcolor}{x_{1}}; \dots  \textcolor{\prodcolor}{t_{m}} \textcolor{\termcolor}{x_{m}}\}$, \textbf{determine} if an expression $\textcolor{\termcolor}{e}$ can be of type $\textcolor{\prodcolor}{t}$.
+
+\end{definition}
+
+\begin{definition}{Subtypes}
+
+  $\type{t_{1}} \le \type{t_{2}}$ means that the values of type $\type{t_{1}}$
+  \begin{compactenum}
+    \item form a subset of the values of type $\type{t_{2}}$
+    \item can be converted into a value of type $\type{t_{2}}$
+    \item fulfill the requirements of type $\type{t_{2}}$
+    \item are assignable to variabels of type $\type{t_{2}}$
+  \end{compactenum}
+
+
+\end{definition}
+
+
+\subsection*{Theorems}
+
+\begin{theorem}{Static evaluation of Attributes}
+  \begin{compactitem}
+    \item an evaluation strategy can only exist, if for {\color{red} any} derivation tree the dependencies between attributes are acyclic
+    \item it is {\color{red} DEXPTIME}-complete to check for cyclic dependencies
+  \end{compactitem}
+\end{theorem}
+
+\subsection*{Algorithms}
+
+\subsubsection*{Type Checking}
+
+{
+  \setlength{\extrarowheight}{1.25em}
+
+  \newcommand{\TypeVar}[1]
+  {
+    \type{#1}
+  }
+
+  \newcommand{\TypeConst}[1]
+  {
+    \textbf{#1}
+  }
+
+
+  \newcommand{\TypeDecl}[2]
+  {
+    \TypeEnv \vdash #1 \, : \, #2
+  }
+
+  \newcommand{\TypeDeclET}[2]
+  {
+    \TypeDecl{\lit{#1}}{\TypeVar{#2}}
+  }
+
+  \newcommand{\TypeDeclEC}[2]
+  {
+    \TypeDecl{\lit{#1}}{\TypeConst{#2}}
+  }
+
+  \newcommand{\TypeInferOne}[2]
+  {
+    \parbox[c]{\hsize}
+    {
+      \infer{#1}
+      {#2}
+    }
+  }
+
+  \newcommand{\TypeInferTwo}[3]
+  {
+    \parbox[c]{\hsize}
+    {
+      \infer{#1}
+      {#2 & #3}
+    }
+  }
+
+  \newcommand{\TypeInferThree}[4]
+  {
+    \parbox[c]{\hsize}
+    {
+      \infer{#1}
+      {#2 & #3 & #4}
+    }
+  }
+
+
+  \begin{tabular}{l c}
+    Ref   & \TypeInferOne
+            {\TypeDeclET{\&e}{t*}}
+            {\TypeDeclET{e}{t}}\\
+
+    Deref & \TypeInferOne
+            {\TypeDeclET{*e}{t}}
+            {\TypeDeclET{e}{t*}}\\
+
+    Array & \TypeInferTwo
+            {\TypeDeclET{e_{1}[e_{2}]}{t}}
+            {\TypeDeclET{e_{1}}{t*}}
+            {\TypeDeclEC{e_{2}}{int}}\\
+
+    Array & \TypeInferTwo
+            {\TypeDeclET{e_{1}[e_{2}]}{t}}
+            {\TypeDeclET{e_{1}}{t[]}}
+            {\TypeDeclEC{e_{2}}{int}}\\
+
+    Struct & \TypeInferOne
+             {\TypeDeclET{e.a_{i}}{t_{i}}}
+             {\TypeDecl{\lit{e}}
+               { \TypeConst{struct} \{\TypeVar{t_{1}} \lit{a_{1}}; \dots \TypeVar{t_{m}} \lit{a_{m}} \} }
+             }\\
+
+    App    & \TypeInferTwo
+             {\TypeDeclET{e(e_{1} \dots e_{m})}{t}}
+             {\TypeDeclET{e}{t(t_{1} \dots t_{m})}}
+             {\TypeDeclET{e_{1}}{t_{1}} \dots \TypeDeclET{e_{m}}{t_{m}}}\\
+
+    Op $\times$    & \TypeInferTwo
+             {\TypeDeclET{e_{1} \times e_{2}}{t_{1} \times t_{2} }}
+             {\TypeDeclET{e_{1}}{t_{1}}}
+             {\TypeDeclET{e_{2}}{t_{2}}}\\
+
+    Op =   & \TypeInferThree
+             {\TypeDeclET{e_{1} = e_{2}}{t_{1}}}
+             {\TypeDeclET{e_{1}}{t_{1}}}
+             {\TypeDeclET{e_{2}}{t_{2}}}
+             {\TypeVar{t_{2}} \le \TypeVar{t_{1}}}\\
+
+    Cast   & \TypeInferTwo
+             {\TypeDeclET{(\TypeVar{t_{1}}) \; e_{2}}{t_{1}}}
+             {\TypeDeclET{e}{t_{2}}}
+             {\TypeVar{t_{2}} \le \TypeVar{t_{1}}}\\
+  \end{tabular}
+
+}
+
+
+\columnbreak{}
+
+\subsubsection*{Structural Subtyping}
+
+\includegraphics[page=238, width=\columnwidth, trim= 1.5cm 6cm 1.5cm .85cm, clip]{./selfservice-handout.pdf}
+
+\includegraphics[page=238, width=\columnwidth, trim= 3cm .5cm 3cm 5cm, clip]{./selfservice-handout.pdf}
+
+\includegraphics[page=239, width=\columnwidth, trim= 4cm 6cm 4cm 1cm, clip]{./selfservice-handout.pdf}
+
+\begin{center} $s_{0} (s_{1} \dots s_{n}) \le t_{0} (t_{1} \dots t_{n})$ $\implies$ \end{center}
+\begin{compactenum}
+  \item \textbf{co-variance} of the return type $s_{0} \le t_{0}$
+  \item \textbf{contra-variance} of the arguments $t_{i} \le s_{i}$ $(1 \le i \le n)$
+\end{compactenum}
+
+\end{multicols*}
+
+\end{document}
