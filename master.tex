@@ -30,6 +30,7 @@
 
 \newtheorem{theorem}{Theorem}
 \theoremstyle{definition}
+
 \newtheorem{definition}{Definition}[section]
 \newtheorem{algorithm}{Algorithm}[section]
 
@@ -483,7 +484,7 @@
 
 \end{definition}
 
-
+\columnbreak
 \begin{definition}{$\LRk$-Grammar}
 
   \dots is a grammar where
@@ -660,6 +661,8 @@
     \end{tabular}
   \end{compactenum}
 \end{algorithm}
+
+\columnbreak
 
 \begin{algorithm}{Shift-Reduce Parser}
 
@@ -853,7 +856,7 @@
 
 \begin{definition}{L-Attributed Grammars}
 
-\includegraphics[page=205, width=\columnwidth, trim= 2.3cm 5.8cm 3cm .85cm, clip]{./selfservice-handout.pdf}
+  \includegraphics[page=205, width=\columnwidth, trim= 2.3cm 5.8cm 3cm .85cm, clip]{./selfservice-handout.pdf}
 
   An attribute system is $L$-attributed, if for all productions $\ntS \derive \nt{S_{1}} \dots \nt{S_{n}}$ every inherited attribute of $S_{j}$ $(1 \le j \le n)$ only depends on
   \begin{compactitem}
@@ -1013,7 +1016,6 @@
 
 }
 
-
 \columnbreak{}
 
 \subsubsection*{Structural Subtyping}
@@ -1030,6 +1032,36 @@
   \item \textbf{contra-variance} of the arguments $t_{i} \le s_{i}$ $(1 \le i \le n)$
 \end{compactenum}
 
+
+\end{multicols*}
+
+\pagebreak
+
+\begin{multicols*}{2}
+
+\includegraphics[page=8, width=\columnwidth, trim= 0 0 0 0, clip]{./FlippedClassroom07.pdf}
+
+\includegraphics[page=10, width=\columnwidth, trim= 0.75cm 1.2cm 0.3cm .75cm, clip]{./FlippedClassroom07.pdf}
+
+\columnbreak
+
+\includegraphics[page=270, width=\columnwidth]{./selfservice-handout.pdf}
+
+\includegraphics[page=292, width=\columnwidth]{./selfservice-handout.pdf}
+
+% \columnbreak
+
+% \includegraphics[page=256, width=\columnwidth, trim = 5cm 3.5cm 5cm 4cm, clip]{./selfservice-handout.pdf}
+
+% \includegraphics[page=262, width=\columnwidth, trim = 1cm 7cm 1cm .73cm, clip]{./selfservice-handout.pdf}
+
+% \includegraphics[page=262, width=\columnwidth, trim = 5.5cm 5cm 5cm 3cm, clip]{./selfservice-handout.pdf}
+
+% \includegraphics[page=267, width=\columnwidth, trim = 1cm .2cm 3.5cm 3.7cm, clip]{./selfservice-handout.pdf}
+
+% \includegraphics[page=269, width=\columnwidth, trim = 1.3cm 2.5cm 2.4cm 2.7cm, clip]{./selfservice-handout.pdf}
+
+% \includegraphics[page=285, width=\columnwidth, trim = 1cm 0 4cm 1.25cm, clip]{./selfservice-handout.pdf}
 \end{multicols*}
 
 \end{document}
