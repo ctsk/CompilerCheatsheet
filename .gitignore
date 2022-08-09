@@ -1,0 +1,10 @@
+*.aux
+*.dvi
+*.log
+*.gz
+master.pdf
+*.aux
+*.aux
+.auctex-auto
+
+
